@@ -1,0 +1,138 @@
+.container{
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0 28px;
+    position: relative;
+}
+
+.row{
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -12px;
+}
+
+.col2{
+    width: calc(100% / 12 * 2 - 28px);
+    margin: 0 14px;
+    box-sizing: border-box;
+}
+
+.col3{
+    width: calc(100% / 12 * 3 - 28px);
+    margin: 0 14px;
+    box-sizing: border-box;
+}
+
+.col4{
+    width: calc(100% / 12 * 4 - 28px);
+    margin: 0 14px;
+    box-sizing: border-box;
+}
+
+.col6{
+    width: calc(100% / 12 * 6 - 28px);
+    margin: 0 14px;
+    box-sizing: border-box;
+}
+
+.col8{
+    width: calc(100% / 12 * 8 - 28px);
+    margin: 0 14px;
+    box-sizing: border-box;
+}
+
+.col9{
+    width: calc(100% / 12 * 9 - 28px);
+    margin: 0 14px;
+    box-sizing: border-box;
+}
+
+.col10{
+    width: calc(100% / 12 * 10 - 28px);
+    margin: 0 14px;
+    box-sizing: border-box;
+}
+
+.col12{
+    width: calc(100% / 12 * 12 - 28px);
+    margin: 0 14px;
+    box-sizing: border-box;
+}
+
+@media screen and (max-width: 1200px){
+    .container{
+        padding: 0 20px;
+    }
+    
+    .row{
+        margin: 0 -10px;
+    }
+    .col2{
+        width: calc(100% / 12 * 6 - 20px);
+        margin: 0 10px;
+    }
+    .col3{
+        width: calc(100% / 12 * 6 - 20px);
+        margin: 0 10px;
+    }
+    .col4{
+        width: calc(100% / 12 * 6 - 20px);
+        margin: 0 10px;
+    }
+    .col6{
+        width: calc(100% / 12 * 12 - 20px);
+        margin: 0 10px;
+    }
+    .col8{
+        width: calc(100% / 12 * 12 - 20px);
+        margin: 0 10px;
+    }
+    .col9{
+        width: calc(100% / 12 * 12 - 20px);
+        margin: 0 10px;
+    }
+    .col10{
+        width: calc(100% / 12 * 12 - 20px);
+        margin: 0 10px;
+    }
+    .col12{
+        width: calc(100% / 12 * 12 - 20px);
+        margin: 0 10px;
+    }
+}
+
+@media screen and (max-width: 640px){
+    .container{
+        padding: 0 16px;
+    }
+    
+    .row{
+        margin: 0 -8px;
+    }
+    .col2{
+        width: calc(100% / 12 * 6 - 16px);
+        margin: 0 8px;
+    }
+    .col3{
+        width: calc(100% / 12 * 12 - 16px);
+        margin: 0 8px;
+    }
+    .col4{
+        width: calc(100% / 12 * 12 - 16px);
+        margin: 0 8px;
+    }
+    .col6{
+        width: calc(100% / 12 * 12 - 16px);
+        margin: 0 8px;
+    }
+    .col8{
+        width: calc(100% / 12 * 12 - 16px);
+        margin: 0 8px;
+    }
+    .cart_wrapper{
+        display: none;
+    }
+    .catalor_wrapper{
+        width: calc(100% / 12 * 12);
+    }
+}

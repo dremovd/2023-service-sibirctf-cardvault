@@ -1,0 +1,393 @@
+openapi: 3.0.0
+servers:
+  - url: 'http://127.0.0.1:7000'
+    description: dev server
+info:
+  description: >-
+    A service for storing customer card data, for the work of an anti-fraud
+    engineer.
+  version: '1.0'
+  title: CardVault
+  contact:
+    email: noreply@sibirctf.org
+tags:
+  - name: payment
+    description: Everything about your suspicious payment
+paths:
+  '/{terminal_key}/payments':
+    get:
+      tags:
+        - payment
+      summary: List of payment
+      description: ''
+      operationId: listOfPayments
+      parameters:
+        - name: terminal_key
+          in: path
+          description: ID of payment to return
+          required: true
+          schema:
+            type: string
+            example: SouthParkBankTest
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Payment'
+        '500':
+          description: Failure
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - reason
+                properties:
+                  reason:
+                    type: string
+                    example: Unexpected error in cardvault
+    post:
+      tags:
+        - payment
+      summary: Create a payment in the vault
+      description: ''
+      operationId: createAPaymentInTheVault
+      parameters:
+        - name: terminal_key
+          in: path
+          description: ID of payment to return
+          required: true
+          schema:
+            type: string
+            example: SouthParkBankTest
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/Payment'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - token
+                properties:
+                  token:
+                    type: string
+                    format: uuid
+                    example: 123e4567-e89b-12d3-a456-426655440000
+        '500':
+          description: Failure
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - reason
+                properties:
+                  reason:
+                    type: string
+                    example: Unexpected error in cardvault
+  '/{terminal_key}/payments/{token}':
+    get:
+      tags:
+        - payment
+      summary: Get payment by ID
+      description: Returns a single payment
+      operationId: getPaymentById
+      parameters:
+        - name: terminal_key
+          in: path
+          description: ID of payment to return
+          required: true
+          schema:
+            type: string
+            example: SouthParkBankTest
+        - name: token
+          in: path
+          description: ID of payment to return
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 123e4567-e89b-12d3-a456-426655440000
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+        '500':
+          description: Failure
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - reason
+                properties:
+                  reason:
+                    type: string
+      security: []
+    patch:
+      tags:
+        - payment
+      summary: Update a payment in the vault
+      description: ''
+      operationId: updateAPaymentInTheVault
+      parameters:
+        - name: terminal_key
+          in: path
+          description: ID of payment to return
+          required: true
+          schema:
+            type: string
+            example: SouthParkBankTest
+        - name: token
+          in: path
+          description: ID of payment to return
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 123e4567-e89b-12d3-a456-426655440000
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/UpdatePayment'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - token
+                properties:
+                  token:
+                    type: string
+                    format: uuid
+                    example: 123e4567-e89b-12d3-a456-426655440000
+        '500':
+          description: Failure
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - reason
+                properties:
+                  reason:
+                    type: string
+                    example: Unexpected error in cardvault
+    delete:
+      tags:
+        - payment
+      summary: Deletes a payment
+      description: ''
+      operationId: deletePayment
+      parameters:
+        - name: terminal_key
+          in: path
+          description: ID of payment to return
+          required: true
+          schema:
+            type: string
+            example: SouthParkBankTest
+        - name: token
+          in: path
+          description: Payment id to delete
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 123e4567-e89b-12d3-a456-426655440000
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - action
+                properties:
+                  action:
+                    type: string
+                    example: destroyed
+        '404':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - action
+                properties:
+                  action:
+                    type: string
+                    example: not_found
+        '500':
+          description: Failure
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - reason
+                properties:
+                  reason:
+                    type: string
+                    example: Unexpected error in cardvault
+      security: []
+  /version:
+    get:
+      summary: Health check
+      description: ''
+      parameters: []
+      operationId: ''
+      responses:
+        '200':
+          description: Default response
+          content:
+            plain/text:
+              schema:
+                type: string
+                example: |-
+                  VERSION:0.0.1
+                  ERALNG:26
+                  ELIXIR:1.15.6
+components:
+  requestBodies:
+    Payment:
+      type: object
+      required:
+        - amount
+        - items
+        - order_id
+        - card
+      properties:
+        amount:
+          type: number
+          example: 0.5
+        items:
+          type: array
+          items:
+            $ref: '#/components/requestBodies/Item'
+        order_id:
+          type: string
+          example: 21050
+        card:
+          $ref: '#/components/schemas/Card'
+    UpdatePayment:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          example: accepted
+          enum:
+            - pending
+            - decline
+            - accepted
+    Item:
+      type: object
+      properties:
+        description:
+          type: string
+          example: Asses of Fire 2 poster
+        price:
+          type: number
+          example: 0.2
+  schemas:
+    Payment:
+      type: object
+      required:
+        - token
+        - status
+        - amount
+        - items
+        - order_id
+        - created_at
+      properties:
+        token:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426655440000
+        status:
+          type: string
+          description: payment status in the system
+          enum:
+            - pending
+            - decline
+            - accepted
+        amount:
+          type: number
+          example: 0.5
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Item'
+        terminal_key:
+          type: string
+          example: SouthParkBankTest
+        order_id:
+          type: string
+          example: 21050
+        card:
+          $ref: '#/components/schemas/Card'
+        created_at:
+          type: string
+          example: 'Сб 28 окт 2023 18:19:13 MSK'
+    Item:
+      type: object
+      properties:
+        description:
+          type: string
+          example: Asses of Fire 2 poster
+        price:
+          type: number
+          example: 0.2
+        image_url:
+          type: string
+          example: >-
+            https://static.wikia.nocookie.net/southpark/images/c/cc/Ic_item_assesoffire.png
+    Card:
+      type: object
+      required:
+        - pan
+        - exp_date_month
+        - exp_date_year
+        - cardholder
+        - cvv
+      properties:
+        pan:
+          type: string
+          example: '4242424242424242'
+        exp_date_month:
+          type: string
+          example: '10'
+        exp_date_year:
+          type: string
+          example: '28'
+        cardholder:
+          type: string
+          example: ERIC CARTMAN
+        cvv:
+          type: string
+          example: '321'
+  securitySchemes: {}
+  links: {}
+  callbacks: {}
+security: []

@@ -1,0 +1,31 @@
+@import './grid.css';
+@import 'fonts.css';
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  transition: .3s all;
+}
+body{
+  background-color: #fff;
+  font-family: 'South Park Cyrillic';
+}
+
+button {
+  padding: 16px 36px;
+  max-width: 260px;
+  border: none;
+  border-radius: 4px;
+  font-family: 'South Park Cyrillic';
+  font-size: 16px;
+  font-weight: 600;
+  background-color: #27792b;
+  color: #fff;
+}
+
+button:hover{
+  cursor: pointer;
+  background-color: #184e1b;
+}

@@ -1,0 +1,19 @@
+version: '3.7'
+services:
+  backend:
+    build: backend
+    ports:
+      - 7000:7000
+      - 4369:4369
+    environment:
+      TTL_MINUTES: 2400
+      PORT: 7000
+      REDIS_HOST: redis
+  frontend:
+    build: frontend
+    ports:
+      - 8080:8080
+  redis:
+    image: redis:7-alpine
+    ports:
+      - 6379:6379

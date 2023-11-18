@@ -1,0 +1,15 @@
+@font-face {
+	font-family: 'South Park Cyrillic';
+	src: url('../assets/fonts/SouthPark_Cyr.eot');
+	src: local('☺'), url('../assets/fonts/SouthPark_Cyr.woff') format('woff'), url('../assets/fonts/SouthPark_Cyr.ttf') format('truetype'), url('../assets/fonts/SouthPark_Cyr.svg') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'SF Cartoonist Hand';
+	src: url('../assets/fonts/SF_Cartoonist_Hand.eot');
+	src: local('☺'), url('../assets/fonts/SF_Cartoonist_Hand.woff') format('woff'), url('../assets/fonts/SF_Cartoonist_Hand.ttf') format('truetype'), url('../assets/fonts/SF_Cartoonist_Hand.svg') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
