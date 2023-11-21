@@ -327,6 +327,23 @@ class ResourceChecker
     end.body[14..-4] # сорян лень json парсить
   end
 
+  def send_payment_1(custom)
+    puts "[ SENDPAYMENT ] set demo payment to #{"http://#{ip_address}:#{BACK_PORT}/#{custom}/payments"}"
+    uri = URI("http://#{ip_address}:#{BACK_PORT}/#{custom}/payments")
+    req = Net::HTTP::Post.new(uri)
+    req.content_type = 'application/json'
+    req['accept'] = 'application/json'
+    req.body = WebClient.build_payment(
+      SeedData.characters.sample,
+      SeedData.items.shuffle[0..rand(1..6)],
+      rand(100..999).to_s
+    ).to_json
+    puts "[ SENDPAYMENT ] payment data #{req.body}"
+    res = Net::HTTP.start(uri.hostname, uri.port) do |http|
+      http.request(req)
+    end.body[14..-4] # сорян лень json парсить
+  end
+
   def get_payment(token)
     puts "[ GET PAYMENT ] get by token #{token}"
     CheckerStatus.mumble unless Net::HTTP.get(URI("http://#{ip_address}:#{BACK_PORT}/#{terminal_key}/payments/#{token}")).include? cvv
@@ -338,11 +355,12 @@ class ResourceChecker
     CheckerStatus.worked
   rescue StandardError => e
     puts "[ EXEPTIONS   ] #{e}"
-    CheckerStatus.corrupt
+    CheckerStatus.down
   end
 
   def put?
     puts "[ PUT         ] start"
+    send_payment_1("DEMO")
     available?
     token = send_payment
     puts "[ PUT         ] process"
@@ -358,9 +376,9 @@ class ResourceChecker
 
   def available?
     puts "[ AVAILABLE   ] start"
-    CheckerStatus.corrupt unless Net::HTTP.get(URI("http://#{ip_address}:#{FRONT_PORT}")).include? 'South Park Bank'
+    CheckerStatus.down unless Net::HTTP.get(URI("http://#{ip_address}:#{FRONT_PORT}")).include? 'South Park Bank'
     puts "[ AVAILABLE   ] frontend work"
-    CheckerStatus.corrupt unless Net::HTTP.get(URI("http://#{ip_address}:#{BACK_PORT}/version")).include? 'VERSION'
+    CheckerStatus.down unless Net::HTTP.get(URI("http://#{ip_address}:#{BACK_PORT}/version")).include? 'VERSION'
     puts "[ AVAILABLE   ] backend work"
   end
 end

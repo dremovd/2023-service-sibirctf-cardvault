@@ -1,0 +1,92 @@
+variables:
+  CI_DEBUG_TRACE: "false"
+  FRONTEND_IMAGE: $REGISTRY_FRONTEND:$CI_COMMIT_TAG
+  BACKEND_IMAGE: $REGISTRY_BACKEND:$CI_COMMIT_TAG
+  FRONTEND_IMAGE_LATEST: $REGISTRY_FRONTEND:latest
+  BACKEND_IMAGE_LATEST: $REGISTRY_BACKEND:latest
+  REGISTRY_FRONTEND: registry.gitlab.com/sibirctf/cardvault/frontend
+  REGISTRY_BACKEND: registry.gitlab.com/sibirctf/cardvault/backend
+  PRODUCTION_DIR: /srv/cardvault
+  REDIS_PORT: 6379
+  REDIS_HOST: redis
+  REDIS_URL: redis://redis:6379
+
+services:
+  - redis:latest
+
+stages:
+  - test
+  - build
+  - deploy
+
+.paths_cache: &paths_cache
+  key: cardstore_cache
+  paths:
+    - _build
+    - deps
+
+.cache_job:
+  cache:
+    <<: *paths_cache
+    policy: pull
+
+tests:
+  image: elixir:1.15-alpine
+  stage: test
+  allow_failure: true
+  before_script:
+    - cd service/backend
+    - apk add --no-cache git
+    - mix local.rebar --force
+    - mix local.hex --force
+    - mix deps.get --only test
+  script:
+    - mix test
+
+build_backend:
+  stage: build
+  image: docker:latest
+  services:
+  - docker:dind
+  before_script:
+    - cd service/backend
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker build -t $BACKEND_IMAGE -t $BACKEND_IMAGE_LATEST .
+    - docker push $BACKEND_IMAGE
+    - docker push $BACKEND_IMAGE_LATEST
+  only:
+    - tags
+
+build_frontend:
+  stage: build
+  image: docker:latest
+  services:
+  - docker:dind
+  before_script:
+    - cd service/frontend
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker build -t $FRONTEND_IMAGE -t $FRONTEND_IMAGE_LATEST .
+    - docker push $FRONTEND_IMAGE
+    - docker push $FRONTEND_IMAGE_LATEST
+  only:
+    - tags
+
+deploy_app:
+  stage: deploy
+  image: alpine:latest
+  before_script:
+  - 'command -v ssh-agent >/dev/null || ( apk add --update openssh )'
+  - eval $(ssh-agent -s)
+  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+  - mkdir -p ~/.ssh
+  - chmod 700 ~/.ssh
+  - ssh-keyscan $VM_IPADDRESS >> ~/.ssh/known_hosts
+  - chmod 644 ~/.ssh/known_hosts
+  script:
+  - scp service/docker-compose.yml root@$VM_IPADDRESS:/root/card_vault
+  - ssh root@$VM_IPADDRESS "cd /root/card_vault && docker-compose pull && docker-compose stop && docker-compose up -d"
+  # when: manual
+  only:
+    - tags
