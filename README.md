@@ -4,6 +4,8 @@
 
 SibirCTF 2023 CardVault service
 
+![Screenshot 2023-11-21 at 12-35-27 South Park Bank Card Vault](https://github.com/SibirCTF/2023-service-sibirctf-cardvault/assets/2613581/6bd4cd0f-2217-4ae1-90bb-b14f9340b925)
+
 Stream from Scoreboard:
 
 https://www.youtube.com/watch?v=v9rq2A7iNK8&t
