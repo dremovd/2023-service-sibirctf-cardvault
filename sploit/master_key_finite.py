@@ -104,10 +104,11 @@ url = f'http://{host}:{BACK_PORT}/remote_dump/'
 print(url)
 response = requests.get(url, verify=False)
 print(response.status_code)
-print(response.text)
+text = response.json()[0]
+print(text)
 
-for key in possible_keys
-    url = f'http://{host}:{BACK_PORT}/payments/{key.split(":")[-1]}'
+for master_key in possible_keys:
+    url = f'http://{host}:{BACK_PORT}/decrypt/{text}/{master_key}'
     print(url)
     response = requests.get(url, verify=False)
     print(response.status_code)
