@@ -79,6 +79,15 @@ defmodule CardVault.Router do
     end
   end
 
+  get "/decrypt/:data/:masterkey" do
+    with {:ok, decrypt_data} <- CardVault.Tools.Aes.decrypt_with_key(data, masterkey),
+         {:ok, decode_data} <- Poison.decode(decrypt_data) do
+      send_json(conn, 200, decode_data)
+    else
+      {:error, reason} -> send_json(conn, 500, %{reason: reason})
+    end
+  end
+
   options "/:terminal_key/payments/:token" do
     conn
     |> wrap_cors

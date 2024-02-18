@@ -44,6 +44,21 @@ defmodule CardVault.Tools do
       {:ok, data} = decrypt(ciphertext)
       data
     end
+    
+    @spec decrypt_with_key(binary() | [1..255], binary()) :: {:error, <<_::144>>} | {:ok, binary()}
+    def decrypt_with_key(ciphertext, secret_key) do
+      ciphertext = :base64.decode(ciphertext)
+      <<iv::binary-16, ciphertext::binary>> = ciphertext
+
+      decrypted_text =
+        unpad(:crypto.crypto_one_time(:aes_256_cbc, secret_key, iv, ciphertext, false))
+
+      if String.valid?(decrypted_text) do
+        {:ok, decrypted_text}
+      else
+        {:error, "Can't decrypt data"}
+      end
+    end
 
     defp unpad(data) do
       to_remove = :binary.last(data)
