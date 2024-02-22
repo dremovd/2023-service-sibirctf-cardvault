@@ -107,6 +107,18 @@ print(response.status_code)
 text = response.json()[0]
 print(text)
 
+key_bytes = [
+    28, 44, 70, 132, 210, 250, 66, 243, 43, 189, 216, 55, 43, 148, 219, 11, 81, 153, 163, 196, 187, 95, 149, 253, 172, 209, 184, 158, 236, 74, 11, 207
+]
+import base64
+key_bytes = bytes(key_bytes)
+
+base64_bytes = base64.b64encode(key_bytes)
+
+possible_keys = [
+    base64_bytes.decode('utf-8')
+]
+
 for master_key in possible_keys:
     payload = json.dumps({
         "data": text,

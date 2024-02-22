@@ -55,6 +55,7 @@ defmodule CardVault.Tools do
       <<iv::binary-16, ciphertext::binary>> = ciphertext
 
       secret_key = :base64.decode(secret_key)
+      IO.inspect secret_key
       decrypted_text =
         unpad(:crypto.crypto_one_time(:aes_256_cbc, secret_key, iv, ciphertext, false))
 
