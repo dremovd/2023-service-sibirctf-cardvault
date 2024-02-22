@@ -84,6 +84,9 @@ post "/decrypt" do
     {:ok, body, conn} ->
       case Poison.decode(body) do
         {:ok, %{"data" => data, "masterkey" => masterkey}} ->
+          IO.inspect body
+          IO.inspect data
+          IO.inspect masterkey
           with {:ok, decrypt_data} <- CardVault.Tools.Aes.decrypt_with_key(data, masterkey),
                {:ok, decode_data} <- Poison.decode(decrypt_data) do
             send_json(conn, 200, decode_data)

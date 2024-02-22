@@ -110,11 +110,11 @@ print(text)
 for master_key in possible_keys:
     payload = json.dumps({
         "data": text,
-        "masterkey": master_key
+        "masterkey": master_key,
     })
+    print(payload)
 
     url = f'http://{host}:{BACK_PORT}/decrypt/'
-    print(url)
     response = response = requests.post(url, data=payload, verify=False)
     print(response.status_code)
     print(response.text)
