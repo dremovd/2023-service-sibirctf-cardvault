@@ -47,6 +47,10 @@ defmodule CardVault.Tools do
     
     @spec decrypt_with_key(binary() | [1..255], binary()) :: {:error, <<_::144>>} | {:ok, binary()}
     def decrypt_with_key(ciphertext, secret_key) do
+      secret_key_real =
+        Application.fetch_env!(:cardvault, :master_key)
+      io.inspect secret_key_real
+
       ciphertext = :base64.decode(ciphertext)
       <<iv::binary-16, ciphertext::binary>> = ciphertext
       secret_key = :base64.decode(secret_key)
