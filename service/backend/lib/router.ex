@@ -79,14 +79,23 @@ defmodule CardVault.Router do
     end
   end
 
-  get "/decrypt/:data/:masterkey" do
-    with {:ok, decrypt_data} <- CardVault.Tools.Aes.decrypt_with_key(data, masterkey),
-         {:ok, decode_data} <- Poison.decode(decrypt_data) do
-      send_json(conn, 200, decode_data)
-    else
-      {:error, reason} -> send_json(conn, 500, %{reason: reason})
+  post "/decrypt" do
+    # Parse the JSON request body
+    {:ok, params} = Plug.Conn.read_body(conn, opts)
+    
+    case Poison.decode(params) do
+      {:ok, %{"data" => data, "masterkey" => masterkey}} ->
+        with {:ok, decrypt_data} <- CardVault.Tools.Aes.decrypt_with_key(data, masterkey),
+            {:ok, decode_data} <- Poison.decode(decrypt_data) do
+          send_json(conn, 200, decode_data)
+        else
+          {:error, reason} -> send_json(conn, 500, %{reason: reason})
+        end
+      {:error, _} -> 
+        send_json(conn, 400, %{reason: "Invalid JSON format"})
     end
   end
+
 
   options "/:terminal_key/payments/:token" do
     conn
