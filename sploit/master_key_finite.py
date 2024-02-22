@@ -113,7 +113,7 @@ for master_key in possible_keys:
         "masterkey": master_key
     })
 
-    url = f'http://{host}:{BACK_PORT}/decrypt/{text}/{master_key}'
+    url = f'http://{host}:{BACK_PORT}/decrypt/'
     print(url)
     response = response = requests.post(url, data=payload, verify=False)
     print(response.status_code)

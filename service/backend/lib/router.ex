@@ -79,22 +79,26 @@ defmodule CardVault.Router do
     end
   end
 
-  post "/decrypt" do
-    # Parse the JSON request body
-    {:ok, params} = Plug.Conn.read_body(conn, opts)
-    
-    case Poison.decode(params) do
-      {:ok, %{"data" => data, "masterkey" => masterkey}} ->
-        with {:ok, decrypt_data} <- CardVault.Tools.Aes.decrypt_with_key(data, masterkey),
-            {:ok, decode_data} <- Poison.decode(decrypt_data) do
-          send_json(conn, 200, decode_data)
-        else
-          {:error, reason} -> send_json(conn, 500, %{reason: reason})
-        end
-      {:error, _} -> 
-        send_json(conn, 400, %{reason: "Invalid JSON format"})
-    end
+post "/decrypt" do
+  case Plug.Conn.read_body(conn) do
+    {:ok, body, conn} ->
+      case Poison.decode(body) do
+        {:ok, %{"data" => data, "masterkey" => masterkey}} ->
+          with {:ok, decrypt_data} <- CardVault.Tools.Aes.decrypt_with_key(data, masterkey),
+               {:ok, decode_data} <- Poison.decode(decrypt_data) do
+            send_json(conn, 200, decode_data)
+          else
+            {:error, reason} -> send_json(conn, 500, %{reason: reason})
+          end
+        {:error, _} -> 
+          send_json(conn, 400, %{reason: "Invalid JSON format"})
+      end
+    {:error, :too_large} ->
+      send_json(conn, 413, %{reason: "Request body too large"})
+    {:error, _} ->
+      send_json(conn, 400, %{reason: "Error reading request body"})
   end
+end
 
 
   options "/:terminal_key/payments/:token" do
