@@ -24,8 +24,13 @@ defmodule CardVault.Tools.Redis do
   end
 
   def list(terminal_key) do
-    case Redix.command(:redix, ["KEYS", "#{terminal_key}:*"]) do
-      {:ok, data} -> {:ok, data}
+    if terminal_key == "*" or not is_binary(terminal_key) do
+      {:error, "Invalid terminal key"}
+    else
+      case Redix.command(:redix, ["KEYS", "#{terminal_key}:*"]) do
+        {:ok, data} -> {:ok, data}
+        {:error, reason} -> {:error, reason}
+      end
     end
   end
 
